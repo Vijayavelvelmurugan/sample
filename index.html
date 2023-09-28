@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <link rel="stylesheet" href="./boostrap/bootstrap.min.css">
+    <style>
+      section {
+        text-align: center;
+        border: solid 5px;
+        height: 671px;
+        width: 546px;
+        margin-left: 501px;
+        border-color: blue;
+        background-color: black;
+        color: lightblue;
+      }
+      form {
+        gap: 10px;
+      }
+      label {
+        display: inline-block;
+        max-width: 100%;
+        margin-bottom: 5px;
+        font-weight: 700;
+        padding: 13px;
+      }
+      body {
+        background-image: url(./img/baby.jpg);
+        background-size: cover;
+      }
+      .but {
+        background-color: blue;
+        color: white;
+        width: 100px;
+        height: 50px;
+        border-radius: 20px;
+      }
+      input {
+        border-radius: 50px;
+        color: black;
+      }
+      .pro {
+        padding-left: 220px;
+      }
+    </style>
+</head>
+<body>
+    <!-- <--navbar -->
+        
+             
+        <!-- <--main -->
+    <section>
+        <h1>Registration Form</h1>
+        <form id="registrationForm" enctype="multipart/form-data">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" required><br><br>
+
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" required><br><br>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required><br><br>
+
+            <label for="email">Email ID:</label>
+            <input type="email" id="email" name="email" required><br><br>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" required><br><br>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required><br><br>
+
+            <label for="profileImage">Profile Image:</label>
+            <input type="file" class="pro" id="profileImage" name="profileImage" accept="image/*"><br><br>
+
+            <input type="button" class="but" value="Submit" onclick="submitForm()">
+        </form>
+    </section>
+
+    <script>
+        function submitForm() {
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            const dob = document.getElementById("dob").value;
+            const email = document.getElementById("email").value;
+            const phone = document.getElementById("phone").value;
+            const password = document.getElementById("password").value;
+            
+            // To check if any field is empty
+            if (!firstName || !lastName || !dob || !email || !phone || !password) {
+                alert("Please fill in all required fields.");
+                return; // Exit the function
+            }
+
+            // Handle profile image upload
+            const profileImageInput = document.getElementById("profileImage");
+            const profileImageFile = profileImageInput.files[0]; // Get the selected file
+            let profileImageData = null;
+
+            if (profileImageFile) {
+                // Read the file as a data URL
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    profileImageData = event.target.result;
+
+                    // Create user data object including the profile image data
+                    const userData = {
+                        firstName,
+                        lastName,
+                        dob,
+                        email,
+                        phone,
+                        password,
+                        profileImage: profileImageData, // Include the image data
+                    };
+
+                    // Retrieve existing user data or initialize as an empty array
+                    let usersData = JSON.parse(localStorage.getItem("usersData")) || [];
+
+                    // Add the new user data to the array
+                    usersData.push(userData);
+
+                    // Store the updated user data array in localStorage
+                    localStorage.setItem("usersData", JSON.stringify(usersData));
+
+                    alert("Registration successful!");
+                    window.location.href = "table.html";
+                };
+
+                reader.readAsDataURL(profileImageFile); // Read the file as a data URL
+            } else {
+                // If no image is selected, create user data without the image data
+                const userData = {
+                    firstName,
+                    lastName,
+                    dob,
+                    email,
+                    phone,
+                    password,
+                };
+
+                // Retrieve existing user data or initialize as an empty array
+                let usersData = JSON.parse(localStorage.getItem("usersData")) || [];
+
+                // Add the new user data to the array
+                usersData.push(userData);
+
+                // Store the updated user data array in localStorage
+                localStorage.setItem("usersData", JSON.stringify(usersData));
+
+                alert("Registration successful!");
+                window.location.href = "table.html";
+            }
+        }
+    </script>
+    <script src="./boostrap/jquery.html"></script>
+    <script src="./boostrap/bootstrap.min.js"></script>
+</body>
+</html>
