@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Data Table</title>
+    <title>Certificate Generator</title>
     <link rel="stylesheet" href="./boostrap/bootstrap.min.css">
     <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            border-color: black !important;
-            border: 5px solid !important;
+        img {
+            max-width: 350px;
+            max-height: 350px;
         }
-
-        th, td {
-            border: 1px solid black!important;
-            text-align: left;
-            padding: 8px;
+        section{
+            text-align: center;
+        }
+        #profileImage{
+            margin-left: 670px;
         }
     </style>
 </head>
@@ -250,86 +248,97 @@
                     <li><a href="#" id="mass">ABOUT</a></li>
                 </ul>
             </div>
-            <!-- <--main -->
+    <!-- <--main -->
     <section>
-        <h1 class="text-center">User Data Table</h1>
-        <div class="container">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Date of Birth</th>
-                        <th>Email ID</th>
-                        <th>Phone Number</th>
-                        <th>Profile Image</th>
-                        <th>Certificate</th> <!-- Change "Action" to "Certificate" -->
-                    </tr>
-                </thead>
-                <tbody id="userTableBody">
-                    <!-- Table rows will be added here -->
-                </tbody>
-            </table>
-        </div>
-    </section>
+    <h1>Certificate Generator</h1>
+    <form id="certificateForm">
+        <label for="profileImage">Upload your profile image:</label>
+        <input type="file" id="profileImage" accept="image/*" required>
+        <br>
+        <button type="submit">Generate Certificate</button>
+    </form>
+    <br>
+    <div id="certificateContainer">
+        <img src="./img/cert.png" alt="Certificate" id="certificateImage">
+    </div>
 
+    <!-- Download buttons for the generated certificate and profile image -->
+    <a id="downloadButton" style="display: none;" download="certificate.png">
+        <button>Download Certificate</button>
+    </a>
+
+    <a id="downloadImageButton" style="display: none;" download="profile.png">
+        <button>Download Profile Image</button>
+    </a>
+    </section>  
     <script>
-        const usersData = JSON.parse(localStorage.getItem("usersData")) || [];
+        const certificateForm = document.getElementById("certificateForm");
+        const profileImageInput = document.getElementById("profileImage");
+        const certificateImage = document.getElementById("certificateImage");
+        const downloadButton = document.getElementById("downloadButton");
+        const downloadImageButton = document.getElementById("downloadImageButton");
 
-        function renderTable() {
-            const tableBody = document.getElementById("userTableBody");
-            tableBody.innerHTML = "";
+        certificateForm.addEventListener("submit", function (e) {
+            e.preventDefault();
 
-            usersData.forEach((user, index) => {
-                const row = document.createElement("tr");
+            // Check if a profile image is selected
+            if (profileImageInput.files.length === 0) {
+                alert("Please select a profile image.");
+                return;
+            }
 
-                const firstNameCell = document.createElement("td");
-                const lastNameCell = document.createElement("td");
-                const dobCell = document.createElement("td");
-                const emailCell = document.createElement("td");
-                const phoneCell = document.createElement("td");
-                const profileImageCell = document.createElement("td");
-                const viewCell = document.createElement("td"); // Create a new cell for the "View" button
+            // Create a FileReader to read the selected profile image
+            const reader = new FileReader();
 
-                firstNameCell.textContent = user.firstName;
-                lastNameCell.textContent = user.lastName;
-                dobCell.textContent = user.dob;
-                emailCell.textContent = user.email;
-                phoneCell.textContent = user.phone;
+            reader.onload = function () {
+                // Set the source of the certificate image to your certificate template
+                certificateImage.src = "./img/cert.png";
 
-                if (user.profileImage) {
-                    const image = document.createElement("img");
-                    image.src = user.profileImage;
-                    image.alt = "Profile Image";
-                    image.width = 50;
-                    profileImageCell.appendChild(image);
-                }
+                // Create a new image for the profile picture
+                const profileImage = new Image();
+                profileImage.src = reader.result;
 
-                // Create a "View" button in the view cell
-                const viewButton = document.createElement("a");
-                viewButton.textContent = "View";
-                viewButton.classList.add("btn", "btn-success");
-                viewButton.href = "cert.html"; // Set the URL of the next page you want to redirect to
+                // Overlay the profile image on the certificate image
+                profileImage.onload = function () {
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
 
-                viewCell.appendChild(viewButton);
+                    canvas.width = certificateImage.width;
+                    canvas.height = certificateImage.height;
 
-                row.appendChild(firstNameCell);
-                row.appendChild(lastNameCell);
-                row.appendChild(dobCell);
-                row.appendChild(emailCell);
-                row.appendChild(phoneCell);
-                row.appendChild(profileImageCell);
-                row.appendChild(viewCell); // Add the "View" button cell to the row
+                    // Draw the certificate image
+                    ctx.drawImage(certificateImage, 0, 0, canvas.width, canvas.height);
 
-                tableBody.appendChild(row);
-            });
-        }
+                    // Calculate the position to center the profile image
+                    const x = (canvas.width - 200) / 2; // Set the width to 175
+                    const y = (canvas.height - 200) / 2; // Set the height to 175
 
-        // Initial rendering of the table
-        renderTable();
+                    // Draw the profile image on the canvas (scaled to 175x175 pixels)
+                    ctx.drawImage(profileImage, x, y, 200, 200);
+
+                    // Set the source of the certificate image to the combined image
+                    certificateImage.src = canvas.toDataURL("image/png");
+
+                    // Show the download buttons
+                    downloadButton.style.display = "block";
+                    downloadImageButton.style.display = "block";
+
+                    // Set the download link for the generated certificate image
+                    downloadButton.href = canvas.toDataURL("image/png");
+
+                    // Set the download link for the profile image
+                    downloadImageButton.href = reader.result;
+
+                    // Provide instructions for manual download
+                    alert("Certificate and profile image generated. Please click the 'Download Certificate' and 'Download Profile Image' buttons below to initiate the download.");
+                };
+            };
+
+            // Read the selected profile image
+            reader.readAsDataURL(profileImageInput.files[0]);
+        });
     </script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="./boostrap/jquery.html"></script>
+    <script src="./boostrap/bootstrap.min.js"></script>
 </body>
 </html>
