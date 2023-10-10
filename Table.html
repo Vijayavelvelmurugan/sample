@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <title>User Data Table</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <style>
     body {
@@ -108,8 +109,32 @@ tr:nth-child(even) {
 tr:hover {
     background-color: #ddd;
 }
+SPAN{
+    color: blue;
+}
 </style>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="./Login.html">BLUE <span>LOOP</span></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="./index.html">REGISTRATION</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">ABOUT</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./Login.html">LOG OUT</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <table class="table table-bordered">
     <h1 class="text-center">User Data Table</h1>
     <div class="container">
         <table class="table table-bordered">
@@ -244,5 +269,8 @@ function handleEditSave(index) {
 // Initial rendering of the table
 renderTable();
 </script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
